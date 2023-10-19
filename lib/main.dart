@@ -2,8 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mental_health/bin/firebase_options.dart';
+import 'package:mental_health/screens/auth/signup_screen.dart';
 import 'package:mental_health/screens/journal/view_journal_list_screen.dart';
-import 'package:mental_health/screens/journal/view_journal_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +38,6 @@ class MyApp extends StatelessWidget {
             Theme.of(context).textTheme,
           ),
         ),
-        home:  ViewJournalListScreen());
+        home: const SignUpScreen());
   }
 }
