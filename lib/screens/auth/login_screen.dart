@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mental_health/resources/authmethods.dart';
 import 'package:mental_health/screens/auth/signup_screen.dart';
+import 'package:mental_health/screens/journal/create_journal_screen.dart';
 import 'package:mental_health/widgets/textfiled.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,13 +14,30 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  void login() async {
+    String res =
+        await Authmethods().login(email: email.text, password: password.text);
+    if (res == "success") {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Login successfully')));
+      const Duration(milliseconds: 500);
+      // ignore: use_build_context_synchronously
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const CreateJournal()));
+    } else {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
       decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/background.jpeg'),
+              image: AssetImage('assets/images/background.png'),
               fit: BoxFit.cover)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 90),
             child: InkWell(
-              onTap: () => {},
+              onTap: () => login(),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   vertical: 12,

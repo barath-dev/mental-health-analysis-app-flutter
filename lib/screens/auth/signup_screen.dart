@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mental_health/resources/authmethods.dart';
 import 'package:mental_health/screens/auth/login_screen.dart';
 import 'package:mental_health/widgets/textfiled.dart';
 
@@ -13,13 +14,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  void signup() async {
+    String res = await Authmethods()
+        .signup(email: email.text, password: password.text, name: name.text);
+    if (res == "success") {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Signup successfully')));
+      const Duration(milliseconds: 500);
+      // ignore: use_build_context_synchronously
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()));
+    } else {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
       decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/background.jpeg'),
+              image: AssetImage('assets/images/background.png'),
               fit: BoxFit.cover)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +86,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 90),
             child: InkWell(
-              onTap: () => {},
+              onTap: () => signup(),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   vertical: 12,
