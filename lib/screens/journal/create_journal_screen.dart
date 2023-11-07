@@ -31,7 +31,7 @@ class _CreateJournalState extends State<CreateJournal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Journal'),
+        title: const Text('Create  Journal'),
       ),
       backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
