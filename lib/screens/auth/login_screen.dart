@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mental_health/resources/authmethods.dart';
 import 'package:mental_health/screens/auth/signup_screen.dart';
 import 'package:mental_health/screens/journal/create_journal_screen.dart';
+import 'package:mental_health/utils/navbar.dart';
 import 'package:mental_health/widgets/textfiled.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,8 +24,8 @@ class _LoginScreenState extends State<LoginScreen> {
           .showSnackBar(const SnackBar(content: Text('Login successfully')));
       const Duration(milliseconds: 500);
       // ignore: use_build_context_synchronously
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const CreateJournal()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const NavBar()));
     } else {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));

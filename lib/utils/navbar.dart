@@ -2,11 +2,23 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mental_health/screens/home_screen.dart';
+import 'package:mental_health/screens/journal/create_journal_screen.dart';
 import 'package:mental_health/screens/journal/view_journal_list_screen.dart';
+import 'package:mental_health/screens/motivational/blog_suggetion_screen.dart';
 import 'package:mental_health/screens/profile_screen.dart';
+import 'package:mental_health/screens/remainder/remainder_screen.dart';
+import 'package:mental_health/services/blog_services.dart';
 
-List<Widget> pages = [HomeScreen(), ViewJournalListScreen(), ProfileScreen()];
+List<Widget> pages = [
+  CreateJournal(),
+  ViewJournalListScreen(),
+  RemainderScreen(),
+  BlogSuggestion(
+    articles: ApiService().getArticle(),
+  ),
+  ProfileScreen()
+];
+late List<List<String>> a;
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -31,9 +43,14 @@ class _NavBarState extends State<NavBar> {
     super.dispose();
   }
 
-  void navigatonTapped(int page) {
-    _pageController.animateToPage(page,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+  void navigatonTapped(int page) async {
+    if (page == 3) {
+      _pageController.animateToPage(page,
+          duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+    } else {
+      _pageController.animateToPage(page,
+          duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+    }
   }
 
   void onpageChanged(int index) {
@@ -64,9 +81,17 @@ class _NavBarState extends State<NavBar> {
                   ? const Color.fromARGB(255, 139, 145, 149)
                   : Colors.grey[500]),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_2_rounded),
+              icon: Icon(Icons.alarm),
               backgroundColor:
                   _pageIndex == 2 ? Colors.blue : Colors.grey[500]),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.article),
+              backgroundColor:
+                  _pageIndex == 3 ? Colors.blue : Colors.grey[500]),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              backgroundColor:
+                  _pageIndex == 4 ? Colors.blue : Colors.grey[500]),
         ],
         onTap: navigatonTapped,
       ),

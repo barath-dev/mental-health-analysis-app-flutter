@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mental_health/screens/auth/login_screen.dart';
+import 'package:mental_health/screens/volunteering/volenteer_feed.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -25,16 +26,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Profile'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                signOut();
+              },
+              icon: const Icon(Icons.logout),
+            )
+          ],
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Profile Screen'),
-              ElevatedButton(
-                onPressed: signOut,
-                child: const Text('Sign Out'),
-              )
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('Name'),
+                subtitle: Text(auth.currentUser!.displayName.toString()),
+              ),
+              ListTile(
+                leading: const Icon(Icons.email),
+                title: const Text('Email'),
+                subtitle: Text(auth.currentUser!.email.toString()),
+              ),
+              ListTile(
+                leading: const Icon(Icons.phone),
+                title: const Text('Phone'),
+                subtitle: Text(auth.currentUser!.phoneNumber.toString()),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const VolFeed();
+                  }));
+                },
+                leading: const Icon(Icons.local_activity),
+                title: const Text('Volunteer for a cause'),
+              ),
+              ListTile(
+                onTap: () {},
+                leading: const Icon(Icons.verified_user),
+                title: const Text('Analyse your mental health'),
+                
+              ),
             ],
           ),
         ));

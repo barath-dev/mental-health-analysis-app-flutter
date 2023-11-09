@@ -67,7 +67,6 @@ class _CreateJournalState extends State<CreateJournal> {
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Journal created')));
                   const Duration(milliseconds: 1500);
-                  Navigator.pop(context);
                 } else {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text(res)));

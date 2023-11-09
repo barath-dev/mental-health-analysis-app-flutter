@@ -1,6 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mental_health/models/jouranl_model.dart';
-import 'package:mental_health/screens/journal/view_journal_screen.dart';
 
 class Tile extends StatelessWidget {
   // ignore: prefer_typing_uninitialized_variables
@@ -11,12 +12,12 @@ class Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     Journal journal = Journal.fromMap(snap);
     void delete() {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ViewJournal(
-                    journal: journal,
-                  )));
+      FirebaseFirestore.instance
+          .collection("jouranls")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('myJournals')
+          .doc(snap.id)
+          .delete();
     }
 
     return Card(
@@ -36,7 +37,9 @@ class Tile extends StatelessWidget {
         trailing: IconButton(
           color: const Color.fromARGB(178, 244, 67, 54),
           icon: const Icon(Icons.delete),
-          onPressed: () {},
+          onPressed: () {
+            delete();
+          },
         ),
         onTap: () {
           delete();
