@@ -8,6 +8,7 @@ class Authmethods {
       {required String email,
       required String password,
       required String name,
+      required String age,
       String mobile = ''}) async {
     String res = "";
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -24,6 +25,8 @@ class Authmethods {
           "password": password,
           "uid": cred.user!.uid,
           "name": name,
+          "mental_health": "",
+          'age': age
         });
         return res;
       } else {

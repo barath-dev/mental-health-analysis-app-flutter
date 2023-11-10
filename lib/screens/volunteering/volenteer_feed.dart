@@ -12,37 +12,82 @@ class VolFeed extends StatefulWidget {
 }
 
 class _VolFeedState extends State<VolFeed> {
+  final TextEditingController _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('activities').snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return const Text('Something went wrong');
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('Loading');
-          }
-
-          return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              return ActivityCard(
-                title: data['title'],
-                description: data['description'],
-                date: data['date'],
-                url: data['url'],
-                uid: data['uid'],
-                eid: document.id,
-                count: data['count'],
-              );
-            }).toList(),
-          );
-        },
-      ),
-    );
+        appBar: AppBar(
+          toolbarHeight: 86,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white,
+                  width: 2,
+                ),
+              ),
+              gradient: LinearGradient(
+                colors: [Colors.deepPurple, Colors.purple.shade300],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          title: Column(
+            children: [
+              const SizedBox(
+                height: 16,
+              ),
+              const Text(
+                'Volunteer Feed',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextFormField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    labelText: 'Search',
+                  ),
+                  onFieldSubmitted: (String _) {
+                    setState(() {});
+                  }),
+            ],
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FutureBuilder(
+            future: FirebaseFirestore.instance
+                .collection('activities')
+                .where('location', isGreaterThanOrEqualTo: _searchController.text)
+                .get(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                  itemCount: snapshot.data?.docs.length,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot activity = snapshot.data!.docs[index];
+                    return ActivityCard(
+                      eid: activity.id,
+                      title: activity['title'],
+                      description: activity['description'],
+                      date: activity['date&time:'],
+                      url: activity['url'],
+                      count: activity['count'],
+                      uid: activity['uid'],
+                      location : activity['location'],
+                    );
+                  },
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          ),
+        ));
   }
 }

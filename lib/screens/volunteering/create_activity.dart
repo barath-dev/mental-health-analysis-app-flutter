@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mental_health/resources/dbmethods.dart';
 import 'package:mental_health/resources/storagemethods.dart';
+import 'package:mental_health/screens/auth/signup_screen.dart';
 import 'package:mental_health/utils/utils.dart';
 
 class CreateActivity extends StatefulWidget {
@@ -25,6 +26,7 @@ class _CreateActivityState extends State<CreateActivity> {
   TextEditingController description = TextEditingController();
   TextEditingController venue = TextEditingController();
   TextEditingController duration = TextEditingController();
+  TextEditingController location = TextEditingController();
   TextEditingController institute = TextEditingController();
 
   Uint8List? _file;
@@ -50,7 +52,7 @@ class _CreateActivityState extends State<CreateActivity> {
       date_time: selectedPickupDate.toString().substring(0, 16),
       title: volenteer_title.text,
       description: description.text,
-      venue: venue.text,
+      location: location.text,
       url: url,
     );
     if (result == 'success') {
@@ -82,6 +84,16 @@ class _CreateActivityState extends State<CreateActivity> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Create Activity'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignUpScreen()));
+                },
+                icon: const Icon(Icons.logout_rounded))
+          ],
         ),
         body: SingleChildScrollView(
             child: Column(children: [
@@ -130,6 +142,19 @@ class _CreateActivityState extends State<CreateActivity> {
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Description',
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            child: TextField(
+              controller: location,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Location',
               ),
             ),
           ),

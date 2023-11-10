@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:uuid/uuid.dart';
 
 class DBMethods {
@@ -31,6 +32,7 @@ class DBMethods {
           "date": date,
           "time": time,
           "uid": auth.currentUser!.uid,
+          'mood': 'normal'
         });
         return 'success';
       } else {
@@ -45,7 +47,7 @@ class DBMethods {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     try {
       await firestore
-          .collection("jouranls")
+          .collection("journals")
           .doc(auth.currentUser!.uid)
           .collection('myJournals')
           .doc(docId)
@@ -59,7 +61,7 @@ class DBMethods {
   Future<String> uploadActivity(
       {required String title,
       required String description,
-      required String venue,
+      required String location,
       required String url,
       required String date_time}) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -67,16 +69,16 @@ class DBMethods {
     String docId = const Uuid().v4();
     try {
       if (title.isNotEmpty &&
+          location.isNotEmpty &&
           description.isNotEmpty &&
-          venue.isNotEmpty &&
           date_time.isNotEmpty &&
           url.isNotEmpty) {
         await firestore.collection("activities").doc(docId).set({
           "title": title,
           "description": description,
-          "venue": venue,
           'date&time:': date_time,
           "url": url,
+          'location': location,
           "uid": auth.currentUser!.uid,
           "count": 0,
           'eid': docId
@@ -114,6 +116,28 @@ class DBMethods {
       } else {
         return "Please fill all the fields";
       }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> getUserAge() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    try {
+      var res =
+          await firestore.collection('users').doc(auth.currentUser!.uid).get();
+      return res['age'];
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> getMood() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    try {
+      var res =
+          await firestore.collection('users').doc(auth.currentUser!.uid).get();
+      return res['mood'];
     } catch (e) {
       return e.toString();
     }

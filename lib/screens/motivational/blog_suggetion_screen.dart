@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, must_be_immutable
 
 // import 'package:http/ht' as http;
 
@@ -7,7 +7,10 @@ import 'package:mental_health/widgets/Blogcard.dart';
 
 class BlogSuggestion extends StatefulWidget {
   List<Map<String, dynamic>> articles;
-  BlogSuggestion({super.key, required this.articles});
+  BlogSuggestion({
+    super.key,
+    required this.articles,
+  });
 
   @override
   State<BlogSuggestion> createState() => _BlogSuggestionState();

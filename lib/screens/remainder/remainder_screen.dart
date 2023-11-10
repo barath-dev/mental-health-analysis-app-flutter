@@ -1,7 +1,12 @@
 // ignore_for_file: avoid_print, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mental_health/resources/dbmethods.dart';
+import 'package:mental_health/screens/dashboard.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class RemainderScreen extends StatefulWidget {
   const RemainderScreen({super.key});
@@ -42,6 +47,72 @@ class _RemainderScreenState extends State<RemainderScreen> {
     }
   }
 
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  @override
+  void initState() {
+    super.initState();
+
+    const AndroidInitializationSettings androidInitializationSettings =
+        AndroidInitializationSettings('flutter_logo');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: androidInitializationSettings);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveBackgroundNotificationResponse: (response) {
+      Fluttertoast.showToast(msg: 'hello');
+    }, onDidReceiveNotificationResponse: (response) {
+      Fluttertoast.showToast(msg: 'hello');
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Dashboard()));
+    });
+  }
+
+  shownotification() {
+    print('emter');
+    // if (selectedPickupDate.isBefore(DateTime.now())) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       content: Text('Please select a valid date'),
+    //     ),
+    //   );
+    //   return;
+    // }
+    print('emter2');
+
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      'channel_id',
+      'channel_name',
+      importance: Importance.max,
+      priority: Priority.high,
+      icon: 'flutter_logo',
+    );
+
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+    flutterLocalNotificationsPlugin.show(0, remainderController.text,
+        descriptionController.text, notificationDetails,
+        payload: "hello thsi is a patload");
+
+    // tz.initializeTimeZones();
+    // tz.setLocalLocation(tz.getLocation('Asia/Kolkata'));
+    // final tz.TZDateTime scheduledAt =
+    //     tz.TZDateTime.from(selectedPickupDate, tz.local);
+
+    // print(scheduledAt.subtract(const Duration(minutes: 330)));
+
+    // flutterLocalNotificationsPlugin.zonedSchedule(
+    //     1,
+    //     remainderController.text,
+    //     descriptionController.text,
+    //     tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
+    //     notificationDetails,
+    //     uiLocalNotificationDateInterpretation:
+    //         UILocalNotificationDateInterpretation.absoluteTime,
+    //     androidAllowWhileIdle: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     Future<DateTime?> pickDate() => showDatePicker(
@@ -52,13 +123,13 @@ class _RemainderScreenState extends State<RemainderScreen> {
 
     Future<TimeOfDay?> pickTime() =>
         showTimePicker(context: context, initialTime: TimeOfDay.now());
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Remainder'),
-        ),
-        body: Column(children: <Widget>[
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Remainder'),
+      ),
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(children: <Widget>[
           Spacer(),
           TextField(
             controller: remainderController,
@@ -70,7 +141,7 @@ class _RemainderScreenState extends State<RemainderScreen> {
             height: 40,
           ),
           TextField(
-            controller: remainderController,
+            controller: descriptionController,
             decoration: const InputDecoration(
               hintText: 'Description about the remainder',
             ),
@@ -111,7 +182,9 @@ class _RemainderScreenState extends State<RemainderScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              _uploadRemainder();
+              // _uploadRemainder();
+              print(selectedPickupDate);
+              shownotification();
             },
             child: const Text('Submit'),
           ),

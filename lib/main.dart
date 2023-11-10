@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mental_health/bin/firebase_options.dart';
 import 'package:mental_health/screens/auth/signup_screen.dart';
+import 'package:mental_health/screens/dashboard.dart';
+import 'package:mental_health/screens/remainder/remainder_screen.dart';
+import 'package:mental_health/screens/volunteering/create_activity.dart';
+import 'package:mental_health/screens/volunteering/volenteer_feed.dart';
 import 'package:mental_health/utils/navbar.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +20,7 @@ void main() async {
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.debug,
   );
+  Permission.notification.request();
   runApp(const MyApp());
 }
 
@@ -43,13 +49,16 @@ class MyApp extends StatelessWidget {
             Theme.of(context).textTheme,
           ),
         ),
-        // home: VolFeed(),
         home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
-                return const NavBar();
+                if (FirebaseAuth.instance.currentUser!.email ==
+                    'sponser@gmail.com') {
+                  return const CreateActivity();
+                }
+                return const Dashboard();
               } else if (snapshot.hasError) {
                 return Center(child: Text("${snapshot.error}"));
               }

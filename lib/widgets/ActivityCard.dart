@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 
 class ActivityCard extends StatelessWidget {
@@ -7,13 +8,15 @@ class ActivityCard extends StatelessWidget {
   final String date;
   final String url;
   final String uid;
+  final String location;
   final int count;
   final String eid;
-  ActivityCard(
+  const ActivityCard(
       {super.key,
       required this.title,
       required this.description,
       required this.date,
+      required this.location,
       required this.eid,
       required this.url,
       required this.count,
@@ -25,41 +28,22 @@ class ActivityCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: const Color.fromARGB(255, 255, 32, 32),
+        color: Colors.grey[400],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.network(url),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.bodyMedium,
+          const SizedBox(
+            height: 8,
           ),
-          const SizedBox(height: 8),
           Text(
-            description,
-            style: Theme.of(context).textTheme.bodyMedium,
+            'Activity Name:$title',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            date,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            count.toString(),
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-              onPressed: () {
-                FirebaseFirestore.instance
-                    .collection('activities')
-                    .doc(eid)
-                    .update({'count': count + 1});
-              },
-              child: const Text('Intersted'))
         ],
       ),
     );

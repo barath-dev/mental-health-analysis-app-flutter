@@ -1,8 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mental_health/resources/authmethods.dart';
+import 'package:mental_health/resources/dbmethods.dart';
 import 'package:mental_health/screens/auth/signup_screen.dart';
-import 'package:mental_health/screens/journal/create_journal_screen.dart';
-import 'package:mental_health/utils/navbar.dart';
+import 'package:mental_health/screens/questioner/questioner.dart';
+import 'package:mental_health/screens/volunteering/create_activity.dart';
 import 'package:mental_health/widgets/textfiled.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,16 +22,25 @@ class _LoginScreenState extends State<LoginScreen> {
   void login() async {
     String res =
         await Authmethods().login(email: email.text, password: password.text);
+    var ag = await DBMethods().getUserAge();
     if (res == "success") {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Login successfully')));
+          .showSnackBar(const SnackBar(content: Text('Signup successfully')));
       const Duration(milliseconds: 500);
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const NavBar()));
+      if (FirebaseAuth.instance.currentUser!.email == 'sponser@gmail.com') {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) {
+          return const CreateActivity();
+        }));
+      } else {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) {
+          return Questioner(
+            age: int.parse(ag),
+          );
+        }));
+      }
     } else {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));
     }
   }

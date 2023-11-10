@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mental_health/screens/auth/login_screen.dart';
+import 'package:mental_health/screens/questioner/questioner.dart';
 import 'package:mental_health/screens/volunteering/volenteer_feed.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -23,6 +25,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _getUser() async {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(auth.currentUser!.uid)
+          .get()
+          .then((value) => print(value.data()));
+    }
+
+    initState() {
+      super.initState();
+      _getUser();
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Profile'),
@@ -35,42 +50,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
             )
           ],
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: const Text('Name'),
-                subtitle: Text(auth.currentUser!.displayName.toString()),
-              ),
-              ListTile(
-                leading: const Icon(Icons.email),
-                title: const Text('Email'),
-                subtitle: Text(auth.currentUser!.email.toString()),
-              ),
-              ListTile(
-                leading: const Icon(Icons.phone),
-                title: const Text('Phone'),
-                subtitle: Text(auth.currentUser!.phoneNumber.toString()),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const VolFeed();
-                  }));
-                },
-                leading: const Icon(Icons.local_activity),
-                title: const Text('Volunteer for a cause'),
-              ),
-              ListTile(
-                onTap: () {},
-                leading: const Icon(Icons.verified_user),
-                title: const Text('Analyse your mental health'),
-                
-              ),
-            ],
-          ),
+        body: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(auth.currentUser!.uid)
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.hasData) {
+              return Center(
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    ListTile(
+                      title: Text(snapshot.data!['name']),
+                      leading: const Icon(Icons.person),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    ListTile(
+                      title: Text(snapshot.data!['email']),
+                      leading: const Icon(Icons.email),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    ListTile(
+                      title: Text(snapshot.data!['age']),
+                      leading: const Icon(Icons.calendar_today),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    ListTile(
+                      title: const Text('Volunteer for a cause'),
+                      leading: const Icon(Icons.volunteer_activism),
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return const VolFeed();
+                        }));
+                      },
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    ListTile(
+                      title: const Text('Check your mental health'),
+                      leading: const Icon(Icons.health_and_safety),
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return Questioner(
+                            age: int.parse(snapshot.data!['age']),
+                          );
+                        }));
+                      },
+                    ),
+                    ElevatedButton(
+                        onPressed: () {}, child: const Text('Remainder')),
+                    const Spacer(
+                      flex: 2,
+                    )
+                  ],
+                ),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
         ));
   }
 }
